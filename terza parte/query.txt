@@ -33,7 +33,8 @@ JOIN
     FROM degrees 
     INNER JOIN departments 
     ON degrees.department_id = departments.id 
-    WHERE departments.name = 'Dipartimento di Neuroscienze';
+    WHERE departments.name = 'Dipartimento di Neuroscienze'
+    AND degrees.level = 'Magistrale';
 
 3. Selezionare tutti i corsi in cui insegna Fulvio Amato (id=44)
 
@@ -51,7 +52,8 @@ JOIN
     INNER JOIN degrees 
     ON students.degree_id = degrees.id 
     INNER JOIN departments 
-    ON degrees.department_id = departments.id;
+    ON degrees.department_id = departments.id
+    ORDER BY students.name ASC , students.surname ASC;
 
 5. Selezionare tutti i corsi di laurea con i relativi corsi e insegnanti
 
@@ -81,4 +83,11 @@ JOIN
 7. BONUS: Selezionare per ogni studente quanti tentativi d’esame ha sostenuto per
 superare ciascuno dei suoi esami
 
-    
+    SELECT students.surname, students.name, students.registration_number, courses.id as id_corso, courses.name as corso,  COUNT(courses.id - 1) as numero_tentativi_falliti, MAX(exam_student.vote) as voto
+    FROM students
+        JOIN exam_student ON students.id = exam_student.student_id
+        JOIN exams ON exam_student.exam_id = exams.id
+        JOIN courses ON exams.course_id = courses.id
+    GROUP BY courses.id, students.registration_number, students.name, students.surname
+    HAVING voto > 17
+    ORDER BY students.surname, students.name ASC;
